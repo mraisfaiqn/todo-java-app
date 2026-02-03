@@ -6,6 +6,7 @@ import org.springframework.web.bind.annotation.*;
 
 @RestController
 @RequestMapping("/api/auth") // This sets the base URL for these actions
+@CrossOrigin(origins = "*")
 public class AuthController {
 
   private final AuthService authService = new AuthService();

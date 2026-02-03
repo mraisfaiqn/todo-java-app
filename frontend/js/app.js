@@ -1,3 +1,14 @@
+// 1. THE BOUNCER: Check if the user is logged in immediately
+if (localStorage.getItem('isLoggedIn') !== 'true') {
+    window.location.href = 'login.html'; // Kick them back to login if no flag is found
+}
+
+// 2. LOGOUT LOGIC: A way to clear the "notebook" 
+function logout() {
+    localStorage.removeItem('isLoggedIn'); // Remove the flag
+    window.location.href = 'login.html';   // Send them back to the start
+}
+
 // Ensure the script runs only after the HTML is fully loaded
 document.addEventListener('DOMContentLoaded', () => {
   const API_URL = "http://localhost:8080/api/todos";
