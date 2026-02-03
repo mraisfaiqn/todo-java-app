@@ -1,0 +1,73 @@
+const API_URL = "http://localhost:8080/api/todos";
+
+async function addTodo() {
+  const input = document.getElementById('todoInput');
+  const title = input.value;
+
+  if (!title) return; // Don't send empty tasks!
+
+  const response = await fetch(API_URL, {
+    method: 'POST',
+    headers: {
+      'Content-Type': 'application/json'
+    },
+    body: JSON.stringify({ title: title })
+  });
+
+  if (response.ok) {
+    input.value = ''; // Clear the box
+    fetchTodos();    // Refresh the list (we'll write this next!)
+  }
+}
+
+async function fetchTodos() {
+  const response = await fetch(API_URL);
+  const todos = await response.json();
+  
+  const list = document.getElementById('todoList');
+  list.innerHTML = ''; // Clear the current list
+
+  todos.forEach(todo => {
+    const li = document.createElement('li');
+    li.textContent = todo.title + " "; // Add a space for the button
+    
+    // Create the delete button
+    const deleteBtn = document.createElement('button');
+    deleteBtn.textContent = '❌';
+    deleteBtn.onclick = () => deleteTodo(todo.id); // Pass the ID here!
+    
+    // Create the update button
+    const editBtn = document.createElement('button');
+    editBtn.textContent = '✏️';
+    editBtn.onclick = () => editTodo(todo.id, todo.title);
+
+    li.appendChild(deleteBtn);
+    li.appendChild(editBtn);
+    list.appendChild(li);
+  });
+}
+
+async function editTodo(id, oldTitle) {
+  const newTitle = prompt("Edit your task:", oldTitle);
+  
+  if (newTitle && newTitle !== oldTitle) {
+    await fetch(`${API_URL}/${id}`, {
+      method: 'PUT',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify({ title: newTitle })
+    });
+    fetchTodos(); // Refresh the list
+  }
+}
+
+async function deleteTodo(id) {
+  const response = await fetch(`${API_URL}/${id}`, {
+    method: 'DELETE'
+  });
+
+  if (response.ok) {
+    fetchTodos(); // Refresh the list after deleting
+  }
+}
+// Call this when the page first loads
+fetchTodos();
