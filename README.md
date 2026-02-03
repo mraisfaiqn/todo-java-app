@@ -6,14 +6,14 @@ A full-stack Task Management application built to demonstrate the integration be
 ---
 
 ## Pre-requisites
-### Tools
+### Code Tools
 - Install Java Development Kit (https://adoptium.net/en-GB)
 - Install Node (https://nodejs.org/en/download)
 - Install PostgreSQL & pgAdmin (https://www.postgresql.org/download/)
 
 
 
-### Database Prep
+### Database Preparation
 - Create local database usin pgAdmin UI
 - Create database table
 ```
@@ -36,6 +36,12 @@ The backend build:
 
 ## JavaScript Frontend
 The frontend build:
+- Port: 3000
+- Dependencies
+  - Nodemon (Automatically restartS app upon changes made to code)
+  - EJS (Node template engine to generate HTML markup with JavaScript)
+  - Express (Node web application framework) 
+
 
 ---
 
