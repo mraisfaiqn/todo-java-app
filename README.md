@@ -5,6 +5,30 @@ A full-stack Task Management application built to demonstrate the integration be
 
 ---
 
+## Pre-requisites
+### Tools
+- Install Java Development Kit (https://adoptium.net/en-GB)
+- Install Node (https://nodejs.org/en/download)
+- Install PostgreSQL & pgAdmin (https://www.postgresql.org/download/)
+
+
+
+### Database Prep
+- Create local database usin pgAdmin UI
+- Create database table
+```
+CREATE TABLE items (
+  id SERIAL PRIMARY KEY,
+  title VARCHAR(100) NOT NULL
+);
+```
+
+### VS Code Extensions
+- Install Extension Pack for Java (Microsoft)
+- Install Spring Boot Extension Pack (VMWare)
+
+---
+
 ## Java Backend
 The backend build:
 
