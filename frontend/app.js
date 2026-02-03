@@ -1,73 +1,87 @@
-const API_URL = "http://localhost:8080/api/todos";
+// Ensure the script runs only after the HTML is fully loaded
+document.addEventListener('DOMContentLoaded', () => {
+  const API_URL = "http://localhost:8080/api/todos";
+  const todoList = document.getElementById('todoList');
+  const todoInput = document.getElementById('todoInput');
+  const addBtn = document.getElementById('addBtn');
 
-async function addTodo() {
-  const input = document.getElementById('todoInput');
-  const title = input.value;
-
-  if (!title) return; // Don't send empty tasks!
-
-  const response = await fetch(API_URL, {
-    method: 'POST',
-    headers: {
-      'Content-Type': 'application/json'
-    },
-    body: JSON.stringify({ title: title })
-  });
-
-  if (response.ok) {
-    input.value = ''; // Clear the box
-    fetchTodos();    // Refresh the list (we'll write this next!)
-  }
-}
-
-async function fetchTodos() {
-  const response = await fetch(API_URL);
-  const todos = await response.json();
-  
-  const list = document.getElementById('todoList');
-  list.innerHTML = ''; // Clear the current list
-
-  todos.forEach(todo => {
-    const li = document.createElement('li');
-    li.textContent = todo.title + " "; // Add a space for the button
+  // 1. Add Task (Create)
+  addBtn.onclick = async () => {
+    const title = todoInput.value.trim();
     
-    // Create the delete button
-    const deleteBtn = document.createElement('button');
-    deleteBtn.textContent = '❌';
-    deleteBtn.onclick = () => deleteTodo(todo.id); // Pass the ID here!
-    
-    // Create the update button
-    const editBtn = document.createElement('button');
-    editBtn.textContent = '✏️';
-    editBtn.onclick = () => editTodo(todo.id, todo.title);
+    if (title === "") {
+      alert("Please enter a task!");
+      return;
+    }
 
-    li.appendChild(deleteBtn);
-    li.appendChild(editBtn);
-    list.appendChild(li);
-  });
-}
-
-async function editTodo(id, oldTitle) {
-  const newTitle = prompt("Edit your task:", oldTitle);
-  
-  if (newTitle && newTitle !== oldTitle) {
-    await fetch(`${API_URL}/${id}`, {
-      method: 'PUT',
+    await fetch(API_URL, {
+      method: 'POST',
       headers: { 'Content-Type': 'application/json' },
-      body: JSON.stringify({ title: newTitle })
+      body: JSON.stringify({ title: title }) 
     });
+
+    todoInput.value = ''; // Clear the input
     fetchTodos(); // Refresh the list
-  }
-}
+  };
 
-async function deleteTodo(id) {
-  const response = await fetch(`${API_URL}/${id}`, {
-    method: 'DELETE'
-  });
+  // 2. Fetch and Display (Read)
+  async function fetchTodos() {
+    try {
+      const response = await fetch(API_URL);
+      const todos = await response.json();
+      
+      todoList.innerHTML = '';
+      todos.forEach(todo => {
+        // Create a div with the 'item' class from your CSS
+        const itemDiv = document.createElement('div');
+        itemDiv.className = 'item';
 
-  if (response.ok) {
-    fetchTodos(); // Refresh the list after deleting
+        // Checkbox for deleting (matching your CSS input[type="checkbox"])
+        const checkbox = document.createElement('input');
+        checkbox.type = 'checkbox';
+        checkbox.onclick = () => deleteTodo(todo.id);
+
+        // Paragraph for the text
+        const p = document.createElement('p');
+        p.textContent = todo.title;
+
+        // Edit button for updating field
+        const editIcon = document.createElement('button');
+        editIcon.textContent = 'Edit'
+        editIcon.className = 'edit';
+        editIcon.onclick = () => editTodo(todo.id, todo.title);
+
+        itemDiv.appendChild(checkbox);
+        itemDiv.appendChild(p);
+        itemDiv.appendChild(editIcon);
+        todoList.appendChild(itemDiv);
+      });
+    } catch (error) {
+      console.error("Error fetching todos:", error);
+    }
   }
-}
-// Call this when the page first loads
-fetchTodos();
+
+  // 3. Edit Task (Update)
+  async function editTodo(id, currentTitle) {
+    const newTitle = prompt("Edit your task:", currentTitle);
+    
+    // If the user didn't cancel and the title isn't empty
+    if (newTitle !== null && newTitle.trim() !== "") {
+      await fetch(`${API_URL}/${id}`, {
+        method: 'PUT',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ title: newTitle.trim() }) 
+      });
+      fetchTodos(); // Refresh the UI
+    }
+  }
+
+  // 4. Delete Task (Delete)
+  async function deleteTodo(id) {
+    await fetch(`${API_URL}/${id}`, { method: 'DELETE' });
+    fetchTodos();
+  }
+
+  // Initial load when the page opens
+  fetchTodos();
+});
