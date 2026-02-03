@@ -14,14 +14,13 @@ A full-stack Task Management application built to demonstrate the integration be
 
 
 ### Database Preparation
-- Create local database usin pgAdmin UI
-- Create database table
+- Modify code with your PostgreSQL username/passwords
+- Create local database using pgAdmin UI
 ```
-CREATE TABLE items (
-  id SERIAL PRIMARY KEY,
-  title VARCHAR(100) NOT NULL
-);
+CREATE DATABASE todo_db;
 ```
+
+---
 
 ### VS Code Extensions
 - Install Extension Pack for Java (Microsoft)
@@ -33,7 +32,7 @@ CREATE TABLE items (
 The backend build:
 The Spring Boot application handling the logic, security, and database connection
 
-- Spring Initializr: Create Maven Project 4.0.2 Java 25
+- Spring Initializr: Create Maven Project 4.0.2 Java 25 LTS
 - Dependencies:
   - Spring Web (Tools to create RESTful API endpoints, frontend<>backend communications)
   - Spring Data JPA (Simplify CRUD operations, manage database data using Java Objects instead of SQL)
@@ -50,6 +49,24 @@ The user interface built with HTML, CSS, and JS that communicates with the backe
 ---
 
 ## Run Commands
+- Run Java App 
+```
+./mvnw spring-boot:run
+```
+- Test Database
+```
+Create Data
+curl -i -X POST http://localhost:8080/api/todos \-H "Content-Type: application/json" \-d "{\"title\": \"Final security test\"}"
+
+Read Data
+http://localhost:8080/api/todos
+
+Update Data
+curl -i -X PUT http://localhost:8080/api/todos/2 \-H "Content-Type: application/json" \-d "{\"title\": \"NEW_TITLE_HERE\"}"
+
+Delete Data
+curl -i -X DELETE http://localhost:8080/api/todos/2
+```
 
 ---
 
