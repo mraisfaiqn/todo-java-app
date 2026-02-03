@@ -139,16 +139,3 @@ dist
 vite.config.js.timestamp-*
 vite.config.ts.timestamp-*
 .vite/
-
-# --- Java / Maven Specifics ---
-# This ignores the compiled build output
-target/
-backend/target/
-
-# Ignore compiled class files
-*.class
-
-# Maven wrapper files (optional, but keeps the repo clean)
-.mvn/
-mvnw
-mvnw.cmd
