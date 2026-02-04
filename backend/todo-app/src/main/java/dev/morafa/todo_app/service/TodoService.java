@@ -1,6 +1,5 @@
 package dev.morafa.todo_app.service;
 
-import dev.morafa.todo_app.dto.TodoDTO;
 import dev.morafa.todo_app.model.Todo;
 import dev.morafa.todo_app.model.User;
 import dev.morafa.todo_app.repository.TodoRepository;
