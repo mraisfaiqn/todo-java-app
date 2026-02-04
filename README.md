@@ -1,7 +1,17 @@
-# To-Do List Web Application
+# Full-Stack Todo List
 
-## Description
-A full-stack Task Management application built to demonstrate the integration between a Java REST API and a JavaScript (HTML/CSS) frontend. The application allows users to perform full CRUD operations on tasks, with data persisted in a local PostgreSQL database.
+A robust, multi-user Task Management application featuring a **Spring Boot REST API** backend and a dynamic **Vanilla JavaScript** frontend. This project demonstrates secure user authentication, relational database management, and a seamless CRUD (Create, Read, Update, Delete) workflow.
+
+## Project Description
+Unlike basic todo lists, this application is built with a **User-Centric Architecture**. It allows individuals to register accounts and maintain private task lists. The system ensures that users only see and interact with their own data through a linked relational database model.
+
+---
+
+## System Architecture
+The project follows the **3-Tier Architecture** pattern:
+1.  **Presentation Tier:** HTML5, CSS3, and JavaScript (Fetch API).
+2.  **Logic Tier:** Spring Boot Services and Controllers.
+3.  **Data Tier:** PostgreSQL (Relational Database) with Spring Data JPA.
 
 ---
 
@@ -11,33 +21,19 @@ A full-stack Task Management application built to demonstrate the integration be
 - Install Node (https://nodejs.org/en/download)
 - Install PostgreSQL & pgAdmin (https://www.postgresql.org/download/)
 
-
-
 ### Database Preparation
-- Modify code with your PostgreSQL username/passwords
+- Modify code with your PostgreSQL username/passwords: 
+  - File path: todo-java-app/backend/todo-app/src/main/resources/application.properties
 - Create local database using pgAdmin UI
 ```
 CREATE DATABASE todo_db;
 ```
 
----
-
 ### VS Code Extensions
 - Install Extension Pack for Java (Microsoft)
 - Install Spring Boot Extension Pack (VMWare)
 
----
-
-## Java Backend
-The backend build:
-The Spring Boot application handling the logic, security, and database connection
-### Features:
-  - Organized code into Controller (Web), Service (Logic), and Repository (Data) layers to improve maintainability.
-  - Centralized business rules, implementing checks to ensure tasks cannot have empty titles.
-  - Introduced Data Transfer Objects to decouple the API from database entities, improving security and flexibility.
-  - Enhanced the Repository with findAllByOrderByIdAsc() to ensure consistent task ordering from the database.
-
-### Initialisation:
+### Spring Initialisation:
 - Spring Initializr: Create Maven Project 4.0.2 Java 25 LTS
 - Dependencies:
   - Spring Web (Tools to create RESTful API endpoints, frontend<>backend communications)
@@ -48,39 +44,49 @@ The Spring Boot application handling the logic, security, and database connectio
 
 ---
 
-## JavaScript Frontend
-The frontend build:
-The user interface built with HTML, CSS, and JS that communicates with the backend via a RESTful API
+## Getting Started
 
-### Features:
-- Separated concerns by moving logic into script.js, keeping index.html focused strictly on structure.
-- Built a Vanilla JavaScript client that communicates asynchronously with the Spring Boot API using the Fetch API.
-- Developed logic to transform JSON data from the backend into interactive HTML list items.
-- Utilized JavaScript closures to lock each button to its specific task ID for accurate Delete and Edit operations.
-
----
-
-## Run Commands
-- Run Java App 
+1.  **Backend:** 
+- Run the `TodoApplication.java` file in your IDE. The server starts on `http://localhost:8080`.
+- Run Java App via Windows bash terminal
 ```
 ./mvnw spring-boot:run
 ```
-- Test Database
-```
-Create Data
-curl -i -X POST http://localhost:8080/api/todos \-H "Content-Type: application/json" \-d "{\"title\": \"Final security test\"}"
+2.  **Frontend:** 
+- Open `login.html` in any modern web browser.
+3.  **Database:**
+- Access live database tables via pgAdmin UI 
 
-Read Data
-http://localhost:8080/api/todos
+---
 
-Update Data
-curl -i -X PUT http://localhost:8080/api/todos/2 \-H "Content-Type: application/json" \-d "{\"title\": \"NEW_TITLE_HERE\"}"
+## API Endpoints
 
-Delete Data
-curl -i -X DELETE http://localhost:8080/api/todos/2
-```
+### **Authentication**
+* `POST /api/auth/register` — Create a new user account.
+* `POST /api/auth/login` — Validate credentials and retrieve `userId`.
+
+### **Task Operations**
+* `GET /api/todos/{userId}` — Fetch all tasks for a specific user.
+* `POST /api/todos/{userId}` — Create a new task for a user.
+* `PUT /api/todos/{id}` — Update an existing task's title.
+* `DELETE /api/todos/{id}` — Delete a specific task.
+
+---
+
+## Key Features
+
+### User Access & Security
+* **Authentication:** Dedicated Register and Login flows.
+* **Session Persistence:** Uses `localStorage` to keep users logged in across page refreshes.
+* **Protected Routes:** Automatic redirection to login if a session is not detected.
+
+### Task Management (CRUD)
+* **Create:** Instantly add tasks linked to your unique User ID.
+* **Read:** Dynamic fetching of user-specific tasks upon dashboard entry.
+* **Update:** Inline editing of task titles.
+* **Delete:** Permanent removal of tasks with real-time UI updates.
 
 ---
 
 ## Remarks
-- PC stopped working
+- When using `spring.jpa.hibernate.ddl-auto=update`, Hibernate will automatically create the `users` and `todos` tables for you the first time you run the app. You don't need to write any `CREATE TABLE` scripts yourself!

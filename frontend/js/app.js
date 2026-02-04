@@ -1,98 +1,108 @@
-// 1. THE BOUNCER: Check if the user is logged in immediately
-if (localStorage.getItem('isLoggedIn') !== 'true') {
-    window.location.href = 'login.html'; // Kick them back to login if no flag is found
+// --- INITIAL SETUP & SECURITY ---
+const userId = localStorage.getItem('userId');
+const isLoggedIn = localStorage.getItem('isLoggedIn');
+
+// If the user isn't logged in, kick them back to the login page
+if (isLoggedIn !== 'true' || !userId) {
+    window.location.href = 'login.html';
 }
 
-// 2. LOGOUT LOGIC: A way to clear the "notebook" 
-function logout() {
-    localStorage.removeItem('isLoggedIn'); // Remove the flag
-    window.location.href = 'login.html';   // Send them back to the start
-}
+const todoInput = document.getElementById('todo-input');
+const todoList = document.getElementById('todo-list');
 
-// Ensure the script runs only after the HTML is fully loaded
-document.addEventListener('DOMContentLoaded', () => {
-  const API_URL = "http://localhost:8080/api/todos";
-  const todoList = document.getElementById('todoList');
-  const todoInput = document.getElementById('todoInput');
-  const addBtn = document.getElementById('addBtn');
+// --- ADD NEW TASK (POST) ---
+async function addTask() {
+  const title = todoInput.value.trim();
+  if (!title) return; // Don't add empty tasks
 
-  // 1. Add Task (Create)
-  addBtn.onclick = async () => {
-    const title = todoInput.value.trim();
-    
-    if (title === "") {
-      alert("Please enter a task!");
-      return;
-    }
-
-    await fetch(API_URL, {
+  try {
+    const response = await fetch(`http://localhost:8080/api/todos/${userId}`, {
       method: 'POST',
       headers: { 'Content-Type': 'application/json' },
-      body: JSON.stringify({ title: title }) 
+      body: JSON.stringify({ title: title })
     });
 
-    todoInput.value = ''; // Clear the input
-    fetchTodos(); // Refresh the list
-  };
-
-  // 2. Fetch and Display (Read)
-  async function fetchTodos() {
-    try {
-      const response = await fetch(API_URL);
-      const todos = await response.json();
-      
-      todoList.innerHTML = '';
-      todos.forEach(todo => {
-        // Create a div with the 'item' class from your CSS
-        const itemDiv = document.createElement('div');
-        itemDiv.className = 'item';
-
-        // Checkbox for deleting (matching your CSS input[type="checkbox"])
-        const checkbox = document.createElement('input');
-        checkbox.type = 'checkbox';
-        checkbox.onclick = () => deleteTodo(todo.id);
-
-        // Paragraph for the text
-        const p = document.createElement('p');
-        p.textContent = todo.title;
-
-        // Edit button for updating field
-        const editIcon = document.createElement('button');
-        editIcon.textContent = 'Edit'
-        editIcon.className = 'edit';
-        editIcon.onclick = () => editTodo(todo.id, todo.title);
-
-        itemDiv.appendChild(checkbox);
-        itemDiv.appendChild(p);
-        itemDiv.appendChild(editIcon);
-        todoList.appendChild(itemDiv);
-      });
-    } catch (error) {
-      console.error("Error fetching todos:", error);
+    if (response.ok) {
+      const newTask = await response.json();
+      renderTask(newTask); // Add to UI immediately
+      todoInput.value = ''; // Clear input field
+    } else {
+      alert("Error saving task to server.");
     }
+  } catch (error) {
+    console.error("Error adding task:", error);
   }
+}
 
-  // 3. Edit Task (Update)
-  async function editTodo(id, currentTitle) {
-    const newTitle = prompt("Edit your task:", currentTitle);
+// --- LOAD TASKS (GET) ---
+async function loadTodos() {
+  try {
+    const response = await fetch(`http://localhost:8080/api/todos/${userId}`);
+    if (!response.ok) throw new Error("Failed to fetch tasks");
     
-    // If the user didn't cancel and the title isn't empty
-    if (newTitle !== null && newTitle.trim() !== "") {
-      await fetch(`${API_URL}/${id}`, {
-        method: 'PUT',
-        headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify({ title: newTitle.trim() }) 
-      });
-      fetchTodos(); // Refresh the UI
+    const tasks = await response.json();
+    todoList.innerHTML = ''; // Clear the list before rendering
+    tasks.forEach(task => renderTask(task));
+  } catch (error) {
+    console.error("Error loading tasks:", error);
+  }
+}
+
+// --- EDIT TASK (PUT) ---
+async function editTask(id, currentTitle) {
+  const newTitle = prompt("Edit your task:", currentTitle);
+  if (newTitle === null || newTitle.trim() === "" || newTitle === currentTitle) return;
+
+  try {
+    const response = await fetch(`http://localhost:8080/api/todos/${id}`, {
+      method: 'PUT',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify({ title: newTitle })
+    });
+
+    if (response.ok) {
+      loadTodos(); // Refresh the list to show updates
     }
+  } catch (error) {
+    console.error("Error updating task:", error);
   }
+}
 
-  // 4. Delete Task (Delete)
-  async function deleteTodo(id) {
-    await fetch(`${API_URL}/${id}`, { method: 'DELETE' });
-    fetchTodos();
+// --- DELETE TASK (DELETE) ---
+async function deleteTask(id, buttonElement) {
+  try {
+    const response = await fetch(`http://localhost:8080/api/todos/${id}`, {
+      method: 'DELETE'
+    });
+
+    if (response.ok) {
+      // Remove the <li> element from the DOM
+      buttonElement.closest('li').remove();
+    }
+  } catch (error) {
+    console.error("Error deleting task:", error);
   }
+}
 
-  // Initial load when the page opens
-  fetchTodos();
-});
+// --- UI RENDERING ---
+function renderTask(task) {
+  const li = document.createElement('li');
+  li.className = 'todo-item';
+  li.innerHTML = `
+    <span>${task.title}</span>
+    <div class="actions">
+        <button class="edit-btn" onclick="editTask(${task.id}, '${task.title}')">Edit</button>
+        <button class="delete-btn" onclick="deleteTask(${task.id}, this)">Delete</button>
+    </div>
+  `;
+  todoList.appendChild(li);
+}
+
+// --- LOGOUT ---
+function logout() {
+  localStorage.clear();
+  window.location.href = 'login.html';
+}
+
+// Start the app by loading the user's data
+loadTodos();

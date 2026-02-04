@@ -1,34 +1,27 @@
 package dev.morafa.todo_app.model;
 
+import jakarta.persistence.*;
+import java.util.List;
+
+import com.fasterxml.jackson.annotation.JsonIgnore;
+
+import lombok.*;
+
+@Entity
+@Table(name = "users")
+@Getter @Setter @NoArgsConstructor
 public class User {
+	@Id
+	@GeneratedValue(strategy = GenerationType.IDENTITY)
+	private Long id;
+
+	@Column(unique = true, nullable = false)
 	private String username;
+
 	private String password;
 
-	// 1. Default Constructor (Required for JSON mapping) ⚙️
-	public User() {
-	}
-
-	// 2. Parameterized Constructor (For manual creation) 👤
-	public User(String username, String password) {
-		this.username = username;
-		this.password = password;
-	}
-
-	// 3. Getters (Required so AuthService and Jackson can read the data) 🔑
-	public String getUsername() {
-		return username;
-	}
-
-	public String getPassword() {
-		return password;
-	}
-
-	// 4. Setters (Required so Jackson can "fill in" the data from the web) 📥
-	public void setUsername(String username) {
-		this.username = username;
-	}
-
-	public void setPassword(String password) {
-		this.password = password;
-	}
+	// "user" matches the field name in Todo.java exactly
+	@OneToMany(mappedBy = "user", cascade = CascadeType.ALL)
+	@JsonIgnore
+	private List<Todo> todos; 
 }

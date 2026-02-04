@@ -53,14 +53,17 @@ if (loginForm) {
         body: JSON.stringify({ username, password })
       });
 
-      const result = await response.text();
-
       // Check if the backend gave us the green light 🚦
-      if (result === "Login Successful!") {
+      if (response.ok) {
+        const data = await response.json(); // Convert response to JSON object
+        
         localStorage.setItem('isLoggedIn', 'true');
-        window.location.href = 'index.html'; // Redirect to To-Do list
+        localStorage.setItem('userId', data.userId); // Save the ID for later!
+        
+        window.location.href = 'index.html';
       } else {
-        messageDiv.innerText = result; // Show "Invalid Credentials"
+        const errorText = await response.text();
+        messageDiv.innerText = errorText;
       }
     } catch (error) {
       messageDiv.innerText = "Error: Backend not responding.";

@@ -1,42 +1,56 @@
 package dev.morafa.todo_app.controller;
 
 import dev.morafa.todo_app.model.Todo;
-import dev.morafa.todo_app.dto.TodoDTO;
 import dev.morafa.todo_app.service.TodoService;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
 
 @RestController
-@RequestMapping("/api/todos") //URL endpoint
-@CrossOrigin // This allows your frontend to talk to this backend later
+@RequestMapping("/api/todos")
+@CrossOrigin(origins = "*") // Crucial for letting your frontend talk to this backend
 public class TodoController {
 
-    @Autowired
-    private TodoService todoService;
+  @Autowired
+  private TodoService todoService;
 
-    // This method will handle "POST" requests to /api/todos
-    @PostMapping
-    public Todo createTodo(@RequestBody TodoDTO todoDTO) {
-      return todoService.createTodo(todoDTO);
-    }
+  //Create a new task and link it to a user.
+  //POST http://localhost:8080/api/todos/{userId}
+  @PostMapping("/{userId}")
+  public Todo saveTodo(@PathVariable Long userId, @RequestBody Todo todo) {
+    return todoService.saveTodo(userId, todo);
+  }
 
-    // This method will handle "GET" requests to /api/todos
-    @GetMapping
-    public List<Todo> getAllTodos() {
-      return todoService.getAllTodos();
-    }
+  //Fetch all tasks belonging to a specific user.
+  //GET http://localhost:8080/api/todos/{userId}
+  @GetMapping("/{userId}")
+  public List<Todo> getTodosByUser(@PathVariable Long userId) {
+    return todoService.getTodosByUser(userId);
+  }
 
-    // This method will handle "PUT" requests to /api/todos/{id}
-    @PutMapping("/{id}")
-    public Todo updateTodo(@PathVariable Long id, @RequestBody TodoDTO todoDTO) {
-      return todoService.updateTodo(id, todoDTO);
+  //Edit an existing task's title.
+  //PUT http://localhost:8080/api/todos/{id}
+  @PutMapping("/{id}")
+  public ResponseEntity<Todo> updateTodo(@PathVariable Long id, @RequestBody Todo todo) {
+    try {
+      Todo updatedTodo = todoService.updateTodo(id, todo);
+      return ResponseEntity.ok(updatedTodo);
+    } catch (RuntimeException e) {
+      return ResponseEntity.notFound().build();
     }
-    
-    // This method will handle "DELETE" requests to /api/todos/{id}
-    @DeleteMapping("/{id}")
-    public void deleteTodo(@PathVariable Long id) {
+  }
+
+  // Delete a task from the database.
+  // DELETE http://localhost:8080/api/todos/{id}
+  @DeleteMapping("/{id}")
+  public ResponseEntity<?> deleteTodo(@PathVariable Long id) {
+    try {
       todoService.deleteTodo(id);
+      return ResponseEntity.ok().build();
+    } catch (Exception e) {
+      return ResponseEntity.notFound().build();
     }
+  }
 }
