@@ -1,19 +1,37 @@
-// --- INITIAL SETUP & SECURITY ---
+// --- 1. INITIAL SETUP & SECURITY ---
 const userId = localStorage.getItem('userId');
+const userName = localStorage.getItem('userDisplay');
 const isLoggedIn = localStorage.getItem('isLoggedIn');
 
-// If the user isn't logged in, kick them back to the login page
+// Redirect if not logged in
 if (isLoggedIn !== 'true' || !userId) {
-    window.location.href = 'login.html';
+  window.location.href = 'login.html';
 }
+
+const nameDisplay = document.getElementById('username-display');
+nameDisplay.innerText = userName;
 
 const todoInput = document.getElementById('todo-input');
 const todoList = document.getElementById('todo-list');
 
-// --- ADD NEW TASK (POST) ---
+// --- 2. LOAD TASKS (GET) ---
+async function loadTodos() {
+  try {
+    const response = await fetch(`http://localhost:8080/api/todos/${userId}`);
+    if (!response.ok) throw new Error("Failed to fetch tasks");
+    
+    const tasks = await response.json();
+    todoList.innerHTML = ''; 
+    tasks.forEach(task => renderTask(task));
+  } catch (error) {
+    console.error("Error loading tasks:", error);
+  }
+}
+
+// --- 3. ADD NEW TASK (POST) ---
 async function addTask() {
   const title = todoInput.value.trim();
-  if (!title) return; // Don't add empty tasks
+  if (!title) return;
 
   try {
     const response = await fetch(`http://localhost:8080/api/todos/${userId}`, {
@@ -24,34 +42,43 @@ async function addTask() {
 
     if (response.ok) {
       const newTask = await response.json();
-      renderTask(newTask); // Add to UI immediately
-      todoInput.value = ''; // Clear input field
-    } else {
-      alert("Error saving task to server.");
+      renderTask(newTask); 
+      todoInput.value = ''; 
     }
   } catch (error) {
     console.error("Error adding task:", error);
   }
 }
 
-// --- LOAD TASKS (GET) ---
-async function loadTodos() {
-  try {
-    const response = await fetch(`http://localhost:8080/api/todos/${userId}`);
-    if (!response.ok) throw new Error("Failed to fetch tasks");
-    
-    const tasks = await response.json();
-    todoList.innerHTML = ''; // Clear the list before rendering
-    tasks.forEach(task => renderTask(task));
-  } catch (error) {
-    console.error("Error loading tasks:", error);
-  }
+// --- 4. EDIT UI HANDLER (Toggle visibility) ---
+function editHandler(id) {
+  const titleElement = document.getElementById("title" + id);
+  const editBtn = document.getElementById("edit" + id);
+  const inputField = document.getElementById("input" + id);
+  const doneBtn = document.getElementById("done" + id);
+
+  // Hide display mode
+  titleElement.setAttribute("hidden", true);
+  editBtn.setAttribute("hidden", true);
+  
+  // Show edit mode
+  inputField.removeAttribute("hidden");
+  doneBtn.removeAttribute("hidden");
+  
+  inputField.focus();
+
+  // Add "Enter" key listener for this specific input
+  inputField.addEventListener("keypress", function(event) {
+    if (event.key === "Enter") {
+        saveEdit(id);
+    }
+  });
 }
 
-// --- EDIT TASK (PUT) ---
-async function editTask(id, currentTitle) {
-  const newTitle = prompt("Edit your task:", currentTitle);
-  if (newTitle === null || newTitle.trim() === "" || newTitle === currentTitle) return;
+// --- 5. SAVE EDIT (PUT) ---
+async function saveEdit(id) {
+  const newTitle = document.getElementById("input" + id).value.trim();
+  if (!newTitle) return; // Prevent saving empty titles
 
   try {
     const response = await fetch(`http://localhost:8080/api/todos/${id}`, {
@@ -61,48 +88,58 @@ async function editTask(id, currentTitle) {
     });
 
     if (response.ok) {
-      loadTodos(); // Refresh the list to show updates
+      loadTodos(); // Refresh to show the updated title
     }
   } catch (error) {
     console.error("Error updating task:", error);
   }
 }
 
-// --- DELETE TASK (DELETE) ---
-async function deleteTask(id, buttonElement) {
+// --- 6. DELETE TASK (Triggered by Checkbox) ---
+async function deleteTask(id) {
   try {
     const response = await fetch(`http://localhost:8080/api/todos/${id}`, {
-      method: 'DELETE'
+        method: 'DELETE'
     });
 
     if (response.ok) {
-      // Remove the <li> element from the DOM
-      buttonElement.closest('li').remove();
+        loadTodos(); 
     }
   } catch (error) {
     console.error("Error deleting task:", error);
   }
 }
 
-// --- UI RENDERING ---
+// --- 7. UI RENDERING ---
 function renderTask(task) {
-  const li = document.createElement('li');
-  li.className = 'todo-item';
-  li.innerHTML = `
-    <span>${task.title}</span>
+  const itemDiv = document.createElement('div');
+  itemDiv.className = 'item';
+  
+  itemDiv.innerHTML = `
+    <input type="checkbox" onchange="deleteTask(${task.id})">
+    
+    <p id="title${task.id}">${task.title}</p>
+    
+    <input id="input${task.id}" type="text" value="${task.title}" class="edit-input" hidden />
+    
     <div class="actions">
-        <button class="edit-btn" onclick="editTask(${task.id}, '${task.title}')">Edit</button>
-        <button class="delete-btn" onclick="deleteTask(${task.id}, this)">Delete</button>
+      <button id="edit${task.id}" class="edit-btn" onclick="editHandler(${task.id})">Edit</button>
+      <button id="done${task.id}" class="edit-btn" onclick="saveEdit(${task.id})" hidden>Save</button>
     </div>
   `;
-  todoList.appendChild(li);
+  todoList.appendChild(itemDiv);
 }
 
-// --- LOGOUT ---
+// --- 8. LOGOUT ---
 function logout() {
   localStorage.clear();
   window.location.href = 'login.html';
 }
 
-// Start the app by loading the user's data
+// Global listener for the main "Add" input (Enter key)
+todoInput.addEventListener("keypress", (e) => {
+  if (e.key === "Enter") addTask();
+});
+
+// Run load on startup
 loadTodos();

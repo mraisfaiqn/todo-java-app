@@ -1,129 +1,224 @@
-/* 1. Global Styles & Background */
+/* 1. Global Reset & Base Styles */
+* {
+  box-sizing: border-box;
+  margin: 0;
+  padding: 0;
+}
+
 html {
   background-color: #e4e9fd;
   background-image: -webkit-linear-gradient(65deg, #3586ff 50%, #F0F4F8 50%);
-  min-height: 1000px;
+  min-height: 100vh;
 }
 
 body {
   display: flex;
   flex-direction: column;
-  justify-content: stretch;
-  min-height: 95vh;
-  margin: 0;
+  justify-content: center;
+  align-items: center;
+  min-height: 100vh;
+  font-family: 'Inter', sans-serif;
 }
 
-/* 2. Layout Containers */
 main {
-  text-align: center;
-  flex: 1 0 auto;
+  flex: 1;
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  align-items: center;
+  width: 100%;
 }
 
-.box {
-  max-width: 400px;
-  margin: 50px auto;
-  background: white;
-  border-radius: 5px;
-  box-shadow: 5px 5px 15px -5px rgba(0, 0, 0, 0.3);
-}
-
+/* 2. Shared Containers (Header & White Box) */
 #heading {
   background-color: #00204a;
-  text-align: center;
-  padding: 10px;
-  border-radius: 5px 5px 0 0;
+  width: 100%;
+  max-width: 400px;
+  padding: 30px 30px; /* Adjusted padding for better text/button balance */
+  border-radius: 10px;
+  box-shadow: 0 10px 20px rgba(0, 0, 0, 0.3);
+  z-index: 2;
+  margin-bottom: -20px;
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+}
+
+.header-text-stack {
+  display: flex;
+  flex-direction: column;
+  gap: 2px;
 }
 
 h1 {
   color: #fff;
-  margin: 0;
   font-family: 'Playfair Display', serif;
   font-weight: 600;
+  font-size: 2rem;
 }
 
-/* 3. Task Item Styles (The Rows) */
+.welcome-msg {
+  color: white;
+  font-family: 'Playfair Display', serif;
+  font-size: 0.95rem;
+  font-weight: 400;
+  opacity: 0.9;
+}
+
+.container, .box:last-of-type {
+  background: white;
+  width: 100%;
+  max-width: 400px;
+  min-height: 300px;
+  padding: 40px 0 20px 0;
+  border-radius: 10px;
+  box-shadow: 10px 10px 30px rgba(0, 0, 0, 0.1);
+  z-index: 1;
+}
+
+/* 3. Authentication Styles */
+.auth-form {
+  display: flex;
+  flex-direction: column;
+  gap: 25px; 
+  padding: 0 30px;
+}
+
+.auth-input {
+  width: 100%;
+  padding: 15px;
+  border: 1px solid #ddd;
+  border-radius: 6px;
+  font-size: 1.1rem;
+}
+
+.auth-btn {
+  background-color: #4285f4; 
+  color: white;
+  padding: 15px;
+  border: none;
+  border-radius: 6px;
+  font-size: 1.3rem;
+  cursor: pointer;
+  transition: 0.3s;
+}
+
+.auth-btn:hover {
+  background-color: #00204a;
+  transform: scale(1.05);
+}
+
+.auth-box p {
+  margin-top: 25px;
+  text-align: center;
+  font-size: 1.1rem;
+}
+
+.feedback {
+  text-align: center;
+  width: 100%;
+  margin-top: 15px;
+  color: red;
+  display: block;
+}
+
+/* 4. To-Do List Items & Inputs */
 .item {
-  min-height: 70px;
+  padding: 15px 30px;
   display: flex;
   align-items: center;
-  border-bottom: 0.5px solid #f1f1f1;
-  padding: 0 20px;
+  justify-content: space-between;
+  border-bottom: 1px solid #f0f4f8;
 }
 
-.item:last-child {
-  border-bottom: 0;
+.item:first-child {
+  padding: 20px 30px;
+  border-bottom: none;
 }
 
-/* 4. Text & Input Styles */
-.box p {
-  margin: 0;
-  padding: 20px 10px;
-  font-size: 20px;
+.item p, .edit-input {
+  flex: 1;
+  min-width: 0;
+  font-size: 1.2rem;
   color: #00204a;
-  flex-grow: 1;
   text-align: left;
-  font-family: 'Inter', sans-serif; 
 }
 
-input[type="text"]::placeholder {
-  font-family: 'Inter', sans-serif; 
-  font-weight: 300; 
-  color: #050505;   
-  opacity: 0.7; 
-}
-
-input[type="text"] {
-  text-align: left;
-  height: 60px;
-  border: none;
-  background: transparent;
-  font-size: 20px;
-  font-weight: 200;
+#todo-input {
   width: 70%;
-  flex-grow: 1;
-}
-
-input[type="text"]:focus {
+  border: none;
+  border-bottom: 1px solid #3586ff;
+  font-size: 1.5rem;
+  padding: 10px 0;
   outline: none;
-  box-shadow: inset 0 -3px 0 0 #3586ff;
 }
 
-/* 5. Buttons & Icons */
+.edit-input {
+  background: transparent;
+  border: none;
+  border-bottom: 1px solid #3586ff;
+  outline: none;
+  padding: 0;
+  margin-right: 15px;
+}
+
+/* 5. Buttons, Checkboxes & Controls */
 button.add {
-  min-height: 50px;
-  width: 50px;
+  height: 60px;
+  width: 60px;
+  margin-right: 7.5px;
   border-radius: 50%;
-  border-color: transparent;
-  background-color: #3586ff;
-  color: #fff;
-  font-size: 30px;
+  background-color: #00a8e8;
+  color: white;
+  border: none;
+  font-size: 35px;
+  cursor: pointer;
+  box-shadow: 0 4px 10px rgba(0, 0, 0, 0.2);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  transition: transform 0.2s;
+}
+
+.edit-btn, .logout-btn {
+  width: 75px; 
+  text-align: center;
+  flex-shrink: 0;
+  cursor: pointer;
+  border-radius: 5px;
+}
+
+.edit-btn {
+  background-color: #00a8e8;
+  color: white;
+  border: none;
+  padding: 5px 0;
+}
+
+.logout-btn {
+  background: transparent;
+  color: white;
+  border: 1px solid rgba(255, 255, 255, 0.5);
+  padding: 5px 0;
+}
+
+button:hover {
+  transform: scale(1.1);
+}
+
+input[type="checkbox"] {
+  width: 20px;
+  height: 20px;
+  margin-right: 15px;
   cursor: pointer;
 }
 
-button.add:hover {
-  background-color: #00204a; 
-}
-
-.edit {
-  background-color: #3586ff; 
-  color: white;             
-  border: none;            
-  padding: 5px 12px;      
-  border-radius: 4px;       
-  cursor: pointer;         
-  font-family: inherit;    
-  transition: background-color 0.2s; 
-  font-family: 'Playfair Display', serif;
-}
-
-.edit:hover {
-  background-color: #00204a; 
-}
-
+/* 6. Footer Styles */
 footer {
-  flex: 0 0 auto;
-  color: 00204a;
+  width: 100%;
+  padding: 30px 0;
   text-align: center;
-  padding-bottom: 5px;
   font-family: 'Playfair Display', serif;
+  font-size: 1.2rem;
+  color: #00204a;
 }

@@ -89,4 +89,4 @@ CREATE DATABASE todo_db;
 ---
 
 ## Remarks
-- When using `spring.jpa.hibernate.ddl-auto=update`, Hibernate will automatically create the `users` and `todos` tables for you the first time you run the app. You don't need to write any `CREATE TABLE` scripts yourself!
+- When using `spring.jpa.hibernate.ddl-auto=update`, Hibernate will automatically create the `users` and `items` tables for you the first time you run the app. You don't need to write any `CREATE TABLE` scripts yourself!

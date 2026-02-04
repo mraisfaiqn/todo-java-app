@@ -28,7 +28,7 @@ public class TodoService {
   
   // Fetch all tasks
   public List<Todo> getTodosByUser(Long userId) {
-    return todoRepository.findByUserId(userId);
+    return todoRepository.findByUserIdOrderByIdAsc(userId);
   }
   
   // Update an existing task

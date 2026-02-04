@@ -1,32 +1,37 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Login</title>
-    <link rel="stylesheet" href="css/style.css">
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Login - Todo App</title>
+  <link href="https://fonts.googleapis.com/css2?family=Inter:ital,opsz,wght@0,14..32,100..900;1,14..32,100..900&family=Playfair+Display:ital,wght@0,400..900;1,400..900&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="css/style.css">
 </head>
 <body>
-  <div class="auth-container">
-    <h2>Login</h2>
-    <form id="login-form">
-      <div class="input-group">
-        <label for="login-username">Username</label>
-        <input type="text" id="login-username" required>
-      </div>
-      
-      <div class="input-group">
-        <label for="login-password">Password</label>
-        <input type="password" id="login-password" required>
-      </div>
+  <main>
+    <div class="box" id="heading">
+      <h1>Login</h1>
+    </div>
 
-      <button type="submit">Enter App</button>
-    </form>
+    <div class="box">
+      <div class="auth-box">
+        <form id="login-form" class="auth-form">
+            <input type="text" id="login-username" class="auth-input" placeholder="Enter Username" autocomplete="off" required>
+            <input type="password" id="login-password" class="auth-input" placeholder="Enter Password" required>
+            
+            <button type="submit" class="auth-btn">Sign In</button>
+        </form>
+          
+        <div id="message" class="feedback"></div>
+        
+        <p>New to the app? <a href="register.html">Create an account</a></p>
+      </div>
+    </div>
+  </main>
 
-    <p>Don't have an account? <a href="register.html">Sign up here</a></p>
-    
-    <div id="message"></div>
-  </div>
+  <footer>
+    <p>Mohd Rais Faiq Nichol © 2026 To-Do Java App</p>
+  </footer>
 
   <script src="js/auth.js"></script>
 </body>
