@@ -1,0 +1,129 @@
+/* 1. Global Styles & Background */
+html {
+  background-color: #e4e9fd;
+  background-image: -webkit-linear-gradient(65deg, #3586ff 50%, #F0F4F8 50%);
+  min-height: 1000px;
+}
+
+body {
+  display: flex;
+  flex-direction: column;
+  justify-content: stretch;
+  min-height: 95vh;
+  margin: 0;
+}
+
+/* 2. Layout Containers */
+main {
+  text-align: center;
+  flex: 1 0 auto;
+}
+
+.box {
+  max-width: 400px;
+  margin: 50px auto;
+  background: white;
+  border-radius: 5px;
+  box-shadow: 5px 5px 15px -5px rgba(0, 0, 0, 0.3);
+}
+
+#heading {
+  background-color: #00204a;
+  text-align: center;
+  padding: 10px;
+  border-radius: 5px 5px 0 0;
+}
+
+h1 {
+  color: #fff;
+  margin: 0;
+  font-family: 'Playfair Display', serif;
+  font-weight: 600;
+}
+
+/* 3. Task Item Styles (The Rows) */
+.item {
+  min-height: 70px;
+  display: flex;
+  align-items: center;
+  border-bottom: 0.5px solid #f1f1f1;
+  padding: 0 20px;
+}
+
+.item:last-child {
+  border-bottom: 0;
+}
+
+/* 4. Text & Input Styles */
+.box p {
+  margin: 0;
+  padding: 20px 10px;
+  font-size: 20px;
+  color: #00204a;
+  flex-grow: 1;
+  text-align: left;
+  font-family: 'Inter', sans-serif; 
+}
+
+input[type="text"]::placeholder {
+  font-family: 'Inter', sans-serif; 
+  font-weight: 300; 
+  color: #050505;   
+  opacity: 0.7; 
+}
+
+input[type="text"] {
+  text-align: left;
+  height: 60px;
+  border: none;
+  background: transparent;
+  font-size: 20px;
+  font-weight: 200;
+  width: 70%;
+  flex-grow: 1;
+}
+
+input[type="text"]:focus {
+  outline: none;
+  box-shadow: inset 0 -3px 0 0 #3586ff;
+}
+
+/* 5. Buttons & Icons */
+button.add {
+  min-height: 50px;
+  width: 50px;
+  border-radius: 50%;
+  border-color: transparent;
+  background-color: #3586ff;
+  color: #fff;
+  font-size: 30px;
+  cursor: pointer;
+}
+
+button.add:hover {
+  background-color: #00204a; 
+}
+
+.edit {
+  background-color: #3586ff; 
+  color: white;             
+  border: none;            
+  padding: 5px 12px;      
+  border-radius: 4px;       
+  cursor: pointer;         
+  font-family: inherit;    
+  transition: background-color 0.2s; 
+  font-family: 'Playfair Display', serif;
+}
+
+.edit:hover {
+  background-color: #00204a; 
+}
+
+footer {
+  flex: 0 0 auto;
+  color: white;
+  text-align: center;
+  padding-bottom: 5px;
+  font-family: 'Playfair Display', serif;
+}
